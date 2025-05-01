@@ -3,8 +3,8 @@
 import sys
 import argparse
 from dotenv import load_dotenv
-from src.workflows.repoSummarizer.workflow import RepoSummarizerWorkflow
-from src.workflows.repoSummarizer.prompts import PROMPTS
+from src.workflows.repoBugFinder.workflow import RepoBugFinderWorkflow
+from src.workflows.repoBugFinder.prompts import PROMPTS
 from prometheus_swarm.clients import setup_client
 
 # Load environment variables
@@ -36,7 +36,7 @@ def main():
     client = setup_client(args.model)
 
     # Run the todo creator workflow
-    workflow = RepoSummarizerWorkflow(
+    workflow = RepoBugFinderWorkflow(
         client=client,
         prompts=PROMPTS,
         repo_url=args.repo,

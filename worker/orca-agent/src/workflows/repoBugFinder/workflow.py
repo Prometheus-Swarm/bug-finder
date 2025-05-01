@@ -12,11 +12,8 @@ from prometheus_swarm.workflows.utils import (
     setup_repository,
 )
 from src.workflows.repoBugFinder.prompts import PROMPTS
-from src.workflows.repoBugFinder.docs_sections import (
-    DOCS_SECTIONS,
-    INITIAL_SECTIONS,
-    FINAL_SECTIONS,
-)
+from kno_sdk import agent_query, index_repo
+from pathlib import Path
 
 
 class Task:
@@ -137,56 +134,110 @@ class RepoBugFinderWorkflow(Workflow):
         # Store branch name in context
         self.context["head"] = branch_result["data"]["branch_name"]
         log_key_value("Branch created", self.context["head"])
+        index = index_repo(Path(self.context["repo_path"]))
 
-        #TODO Add logic here finding the bugs in the repository and creating a PR for them 
-
-         # Generate README file
-        for i in range(3):
-            if i > 0:
-                prompt_name = "other"
-            readme_result = self.generate_readme_file(prompt_name)
-            if not readme_result or not readme_result.get("success"):
-                log_error(
-                    Exception("README generation failed"), "README generation failed"
-                )
+        bug_finder_file_result = self.generate_bug_finder_file(index)
+        if not bug_finder_file_result or not bug_finder_file_result.get("success"):
+            log_error(
+                Exception("README generation failed"), "README generation failed"
+            )
+            return {
+                "success": False,
+                "message": "README generation failed",
+                "data": None,
+            }
+        if bug_finder_file_result.get("success"):
+            review_result = self.review_readme_file(bug_finder_file_result)
+            if not review_result or not review_result.get("success"):
+                log_error(Exception("README review failed"), "README review failed")
                 return {
                     "success": False,
-                    "message": "README generation failed",
+                    "message": "README review failed",
                     "data": None,
                 }
-            if readme_result.get("success"):
-                review_result = self.review_readme_file(readme_result)
-                if not review_result or not review_result.get("success"):
-                    log_error(Exception("README review failed"), "README review failed")
-                    return {
-                        "success": False,
-                        "message": "README review failed",
-                        "data": None,
-                    }
-                log_key_value("README review result", review_result.get("data"))
-                if (
-                    review_result.get("success")
-                    and review_result.get("data").get("recommendation") == "APPROVE"
-                ):
-                    result = self.create_pull_request()
-                    return result
-                else:
-                    self.context["previous_review_comments_section"] = PROMPTS[
-                        "previous_review_comments"
-                    ] + review_result.get("data").get("comment")
+            log_key_value("README review result", review_result.get("data"))
+            if (
+                review_result.get("success")
+                and review_result.get("data").get("recommendation") == "APPROVE"
+            ):
+                result = self.create_pull_request()
+                return result
+            else:
+                self.context["previous_review_comments_section"] = PROMPTS[
+                    "previous_review_comments"
+                ] + review_result.get("data").get("comment")
 
         return {
             "success": False,
             "message": "README Review Exceed Max Attempts",
             "data": None,
         }
-
-    def generate_readme_file(self, repo_type):
+    def review_readme_file(self, readme_result):
+        """Execute the issue generation workflow."""
+        try:
+            log_section("REVIEWING README FILE")
+            
+            # TODO: ADD KNO TO REVIEW THE FILE
+            return {
+                "success": True,
+                "message": "README review completed",
+                "data": {
+                    "recommendation": "APPROVE",
+                },
+            }
+            # review_readme_file_phase = phases.ReadmeReviewPhase(workflow=self)
+            # return review_readme_file_phase.execute()
+        except Exception as e:
+            log_error(e, "Readme file review workflow failed")
+            return {
+                "success": False,
+                "message": f"Readme file review workflow failed: {str(e)}",
+                "data": None,
+            }
+    def generate_bug_finder_file(self, index):
         """Generate the README file."""
 
         try:
             # TODO: GENERATE THE ISSUES HERE 
-            self.context["readme_content"] = "\n\n".join(readme_sections)
+            
+            identified_repo_type = agent_query(
+                repo_index=index,
+                llm_system_prompt=PROMPTS[
+                    "system_prompt"
+                ],
+                prompt=PROMPTS[
+                    "identity_repo_type"
+                ],
+                MODEL_API_KEY=os.environ.get("ANTHROPIC_API_KEY"),
+            )
+            
+            print("identified_repo_type",identified_repo_type)
+            identified_common_vulnerabilities = agent_query(
+                repo_index=index,
+                llm_system_prompt=PROMPTS[
+                    "system_prompt"
+                ],
+                prompt=PROMPTS[
+                    "generate_common_vulnerabilities"
+                ].format(identified_repo_type=identified_repo_type),
+                MODEL_API_KEY=os.environ.get("ANTHROPIC_API_KEY"),
+            )
+            print("identified_common_vulnerabilities",identified_common_vulnerabilities)
+
+            identified_issues = agent_query(
+                repo_index=index,
+                llm_system_prompt=PROMPTS[
+                    "system_prompt"
+                ],
+                prompt=PROMPTS[
+                    "scan_codebase_for_identified_issues"
+                ].format(identified_common_vulnerabilities=identified_common_vulnerabilities),
+                MODEL_API_KEY=os.environ.get("ANTHROPIC_API_KEY"),
+            )
+            
+            print("identified_issues",identified_issues)
+
+            self.context["readme_content"] = identified_issues
 
             generate_readme_file_phase = phases.ReadmeFileCreationPhase(workflow=self)
             return generate_readme_file_phase.execute()

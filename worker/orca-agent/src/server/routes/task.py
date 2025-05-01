@@ -1,10 +1,10 @@
 import os
 import requests
 from flask import Blueprint, jsonify, request
-from src.server.services import repo_summary_service
+from src.server.services import repo_bug_finder_service
 from concurrent.futures import ThreadPoolExecutor
 from prometheus_swarm.database import get_db
-from src.server.services.repo_summary_service import logger
+from src.server.services.repo_bug_finder_service import logger
 
 bp = Blueprint("task", __name__)
 executor = ThreadPoolExecutor(max_workers=2)
@@ -40,7 +40,7 @@ def post_pr_url(agent_result, task_id, signature, round_number):
 
 @bp.post("/worker-task/<round_number>")
 def start_task(round_number):
-    logger = repo_summary_service.logger
+    logger = repo_bug_finder_service.logger
     logger.info(f"Task started for round: {round_number}")
 
     data = request.get_json()
@@ -56,7 +56,7 @@ def start_task(round_number):
     db = get_db()
 
     if os.getenv("TEST_MODE") == "true":
-        result = repo_summary_service.handle_task_creation(
+        result = repo_bug_finder_service.handle_task_creation(
             task_id=task_id,
             round_number=int(round_number),
             repo_url=repo_url,
@@ -65,7 +65,7 @@ def start_task(round_number):
         return jsonify(result)
     else:
         agent_result = executor.submit(
-            repo_summary_service.handle_task_creation,
+            repo_bug_finder_service.handle_task_creation,
             task_id=task_id,
             round_number=round_number,
             repo_url=repo_url,

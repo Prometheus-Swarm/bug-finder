@@ -2,9 +2,9 @@
 
 PROMPTS = {
     "system_prompt": (
-        "You are an expert software architect and technical lead specializing in summarizing "
-        "repositories into comprehensive documentation. You excel at analyzing codebases "
-        "and creating clear, structured documentation."
+        "You are an expert software engineer and technical lead specializing in identifying bugs in software repositories. "
+        "You possess deep knowledge of common programming bugs and anti-patterns across various languages and frameworks. "
+        "You excel at analyzing codebases to pinpoint potential issues, explain their root causes, and document them clearly for developers to resolve."
     ),
     "create_branch": (
         "You need to create a feature branch for the README generation.\n"
@@ -91,5 +91,51 @@ PROMPTS = {
         "DO NOT consider the filename in your analysis, only the content.\n"
         "STOP after submitting the review report."
     ),
-    "previous_review_comments": ("Here are the comments from the previous review:\n"),
+    "previous_review_comments": (
+        "Here are the comments from the previous review:\n"
+    ),
+    "identity_repo_type": (
+        """
+        You are analyzing a software repository to identify its type and characteristics.
+        Explore the directory structure and relevant files (e.g., `package.json`, `requirements.txt`, `Dockerfile`, `setup.py`, `pyproject.toml`, etc.). Your goal is to extract the following information:
+        - Primary programming language(s)
+        - Frameworks/libraries used
+        - Type of project (e.g., CLI tool, REST API backend, web frontend, data pipeline, etc.)
+        - Any patterns or architectural styles (e.g., microservices, monolith, layered architecture)
+
+        Output a structured summary that will be used for further vulnerability analysis."""
+    ),
+    "generate_common_vulnerabilities": (
+        """
+        You are given the following information about a software project:
+
+        {identified_repo_type}
+
+        Based on the above project details, list the most common vulnerabilities, bugs, and anti-patterns found in such codebases. Include:
+
+        - Security vulnerabilities (e.g., input validation, insecure dependencies)
+        - Performance issues (e.g., blocking calls, memory misuse)
+        - Maintainability/code smells (e.g., large functions, code duplication)
+
+        Group them by category and return in a structured JSON-like format that will be used to guide code analysis in the next step."""
+    ),
+    "scan_codebase_for_identified_issues":(
+        """
+        You are now analyzing the codebase of a software repository.
+
+        You are given a list of known vulnerabilities and anti-patterns typically found in this type of project:
+
+        {identified_common_vulnerabilities}
+
+        Your task is to:
+        - Search the codebase for instances of these issues
+        - For each issue found:
+        - Name the issue
+        - Provide the file name and line number
+        - Include a short code snippet that shows the problem
+        - Explain why it's a problem
+        - Briefly suggest how to fix it
+
+        Only report issues that you can clearly identify from the code. Be concise and focus on actionable findings."""
+    )
 }
