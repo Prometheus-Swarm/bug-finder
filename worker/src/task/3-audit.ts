@@ -10,6 +10,9 @@ export async function audit(cid: string, roundNumber: number, submitterKey: stri
    * and sends them to your container for auditing
    */
 
+  // TODO: Complete the audit function
+  return true;
+
   try {
     const orcaClient = await getOrcaClient();
     if (!orcaClient) {

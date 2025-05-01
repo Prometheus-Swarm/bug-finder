@@ -2,12 +2,12 @@
 
 from prometheus_swarm.database import get_db
 from prometheus_swarm.clients import setup_client
-from src.workflows.repoSummarizer.workflow import RepoSummarizerWorkflow
+from src.workflows.repoBugFinder.workflow import RepoBugFinderWorkflow
 from prometheus_swarm.utils.logging import logger
 from dotenv import load_dotenv
 from src.workflows.repoSummarizer.prompts import PROMPTS
 from src.database.models import Submission
-
+from kno_sdk import agent_query, index_repo
 load_dotenv()
 
 
@@ -16,15 +16,17 @@ def handle_task_creation(task_id, round_number, repo_url, db=None):
     try:
         if db is None:
             db = get_db()  # Fallback for direct calls
-        client = setup_client("anthropic")
-
-        workflow = RepoSummarizerWorkflow(
+         client = setup_client("anthropic")
+        
+        workflow = RepoBugFinderWorkflow(
             client=client,
             prompts=PROMPTS,
             repo_url=repo_url,
         )
 
-        result = workflow.run()
+        
+
+        # result = workflow.run()
         if result.get("success"):
             submission = Submission(
                 task_id=task_id,
