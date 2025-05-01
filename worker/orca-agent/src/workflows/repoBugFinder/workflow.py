@@ -185,7 +185,7 @@ class RepoBugFinderWorkflow(Workflow):
                     "recommendation": "APPROVE",
                 },
             }
-            # review_readme_file_phase = phases.ReadmeReviewPhase(workflow=self)
+            # review_readme_file_phase = phases.IssuesReadmeReviewPhase(workflow=self)
             # return review_readme_file_phase.execute()
         except Exception as e:
             log_error(e, "Readme file review workflow failed")
@@ -237,9 +237,23 @@ class RepoBugFinderWorkflow(Workflow):
             
             print("identified_issues",identified_issues)
 
-            self.context["readme_content"] = identified_issues
+            identified_issues_formatted_markdown = agent_query(
+                repo_index=index,
+                llm_system_prompt=PROMPTS[
+                    "system_prompt"
+                ],
+                prompt=PROMPTS[
+                    "format_identified_issues_into_markdown"
+                ].format(identified_code_issues=identified_issues),
+                MODEL_API_KEY=os.environ.get("ANTHROPIC_API_KEY"),
+            )
+            
+            print("identified_issues_formatted_markdown",identified_issues_formatted_markdown)
+            
+            self.context["readme_content"] = identified_issues_formatted_markdown
+            self.context["file_name"] = "SECURITY_AUDIT_Prometheus.md"
 
-            generate_readme_file_phase = phases.ReadmeFileCreationPhase(workflow=self)
+            generate_readme_file_phase = phases.IssuesReadmeFileCreationPhase(workflow=self)
             return generate_readme_file_phase.execute()
 
         except Exception as e:

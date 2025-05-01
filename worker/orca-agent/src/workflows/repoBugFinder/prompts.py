@@ -7,7 +7,7 @@ PROMPTS = {
         "You excel at analyzing codebases to pinpoint potential issues, explain their root causes, and document them clearly for developers to resolve."
     ),
     "create_branch": (
-        "You need to create a feature branch for the README generation.\n"
+        "You need to create a feature branch for the README that highlights the potential bugs and antipattern in the repository.\n"
         "Create a new branch with a descriptive name related to creating a README file.\n"
     ),
     "classify_repository": (
@@ -59,7 +59,7 @@ PROMPTS = {
         "do NOT mention them in your documentation. They do not exist and are not relevant.\n"
         "This is a public facing document, so DO NOTinclude any instructions or suggestions to the developer.\n"
     ),
-    "generate_readme": (
+    "generate_issues_readme": (
         "Create a descriptive title for the following README contents and create the README file:\n"
         "{readme_content}\n"
         "The content will be added automatically, your job is just to create a good title."
@@ -121,21 +121,65 @@ PROMPTS = {
     ),
     "scan_codebase_for_identified_issues":(
         """
-        You are now analyzing the codebase of a software repository.
+            You are analyzing the codebase of a software repository to detect known vulnerabilities and anti-patterns.
 
-        You are given a list of known vulnerabilities and anti-patterns typically found in this type of project:
+            You are provided with a list of typical issues commonly found in this type of project:
 
-        {identified_common_vulnerabilities}
+            {identified_common_vulnerabilities}
 
-        Your task is to:
-        - Search the codebase for instances of these issues
-        - For each issue found:
-        - Name the issue
-        - Provide the file name and line number
-        - Include a short code snippet that shows the problem
-        - Explain why it's a problem
-        - Briefly suggest how to fix it
+            Tools available:
+            - `search_code("query")`: Search the codebase using keywords or patterns (e.g., "eval(", "os.system(", or class/function names).
+            - `read_file(filepath)`: Read the contents of a specific file for deeper inspection.
 
-        Only report issues that you can clearly identify from the code. Be concise and focus on actionable findings."""
+            Your task:
+            - Use `search_code` to locate potential matches for the vulnerabilities or anti-patterns listed above.
+            - Use `read_file` to open and analyze specific files where matches were found.
+            - For each confirmed issue, provide:
+                - **Issue name**
+                - **File name and line number**
+                - **Relevant code snippet** (only enough to demonstrate the problem)
+                - **Explanation** of why it’s a problem
+                - **Suggested fix** (brief and actionable)
+
+            Important:
+            - Only report issues that are clearly present and verifiable in the code.
+            - Be concise, avoid speculative or redundant findings.
+            - Group issues by category (e.g., Security, Performance, Maintainability) in your internal structure for later formatting.
+
+            Focus on high-signal findings that developers can act on.
+        """
+    ),
+    "format_identified_issues_into_markdown":(
+    """
+        You are given the results of a static code analysis which identified vulnerabilities and code issues in a software project.
+
+        The data is structured as a list of findings in the following format:
+
+        {identified_code_issues}
+
+        Each issue includes:
+        - Issue name
+        - Category (e.g., Security, Performance, Maintainability)
+        - File name and line number
+        - Code snippet
+        - Explanation of the issue
+        - Suggested fix
+
+        Your task is to format this information into a well-structured, human-readable **Markdown report** (`SECURITY_AUDIT_Prometheus.md`) that can be committed to the repository.
+
+        The Markdown file should include:
+        - A title (e.g., "# Codebase Vulnerability and Quality Report")
+        - A brief introductory paragraph
+        - A table of contents linking to each category (use markdown anchor links)
+        - For each issue (grouped by category):
+            - An H2 heading for the category (e.g., ## Security Issues)
+            - An H3 heading for each issue with the name (e.g., ### [1] Insecure Deserialization)
+            - File name and line number (e.g., _File: app/utils.py, Line: 42_)
+            - A fenced code block with the relevant code
+            - A short explanation
+            - A **Suggested Fix** section with actionable guidance
+
+        Ensure the Markdown is clear, easy to navigate, and suitable for sharing in a development team.
+    """
     )
 }

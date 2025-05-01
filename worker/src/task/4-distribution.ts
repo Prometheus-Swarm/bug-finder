@@ -38,12 +38,12 @@ export const distribution = async (
         distributionList[submitter.publicKey] = 0;
         continue;
       } else {
-        // TODO: Check if I should include = 0 here
-        if (submitter.votes >= 0) {
+        // TODO: Update below when fixing audit 
+        // if (submitter.votes >= 0) {
           distributionList[submitter.publicKey] = customReward;
-        } else {
-          distributionList[submitter.publicKey] = 0;
-        }
+        // } else {
+        //   distributionList[submitter.publicKey] = 0;
+        // }
       }
     }
 
