@@ -197,9 +197,7 @@ class RepoBugFinderWorkflow(Workflow):
     def generate_bug_finder_file(self, index):
         """Generate the README file."""
 
-        try:
-            # TODO: GENERATE THE ISSUES HERE 
-            
+        try:            
             identified_repo_type = agent_query(
                 repo_index=index,
                 llm_system_prompt=PROMPTS[
@@ -251,7 +249,7 @@ class RepoBugFinderWorkflow(Workflow):
             print("identified_issues_formatted_markdown",identified_issues_formatted_markdown)
             
             self.context["readme_content"] = identified_issues_formatted_markdown
-            self.context["file_name"] = "SECURITY_AUDIT_Prometheus.md"
+            self.context["file_name"] = "SECURITY_AUDIT_Prometheus-beta.md"
 
             generate_readme_file_phase = phases.IssuesReadmeFileCreationPhase(workflow=self)
             return generate_readme_file_phase.execute()

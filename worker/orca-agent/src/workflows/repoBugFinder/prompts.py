@@ -2,8 +2,8 @@
 
 PROMPTS = {
     "system_prompt": (
-        "You are an expert software engineer and technical lead specializing in identifying bugs in software repositories. "
-        "You possess deep knowledge of common programming bugs and anti-patterns across various languages and frameworks. "
+        "You are an expert software engineer and technical lead specializing in identifying bugs, common vulnerabilities and anti-patterns in software repositories. "
+        "You possess deep knowledge of common programming bugs, vulnerabilities and anti-patterns across various languages and frameworks. "
         "You excel at analyzing codebases to pinpoint potential issues, explain their root causes, and document them clearly for developers to resolve."
     ),
     "create_branch": (
