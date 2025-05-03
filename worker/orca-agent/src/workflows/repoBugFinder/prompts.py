@@ -39,26 +39,6 @@ PROMPTS = {
         "If files are mentioned in the README but are not present in the codebase, "
         "do NOT use them as a source of information.\n"
     ),
-    "generate_readme_section": (
-        "You are writing the {section_name} section of a README file for a repository.\n"
-        "The repository has been cloned to the current directory and the files are available for inspection.\n"
-        "The readme will contain the following sections:\n"
-        "{all_sections}\n"
-        "Restrict your documentation to the section you are writing.\n"
-        "Read all files relevant to your task and generate comprehensive, clear documentation.\n"
-        "The section should include the following information:\n"
-        "{section_description}\n"
-        "Write the section in markdown format.\n"
-        "The section name will be automatically added as a second level heading. "
-        "DO NOT include it in your documentation. DO NOT include any second level headings.\n"
-        "Any sub-sections you would like to add should be THIRD level headings or LOWER. "
-        "Follow the proper hierarchy when choosing a heading level.\n"
-        "IMPORTANT: DO NOT assume that any existing documentation is correct. It may be inaccurate or outdated.\n"
-        "Create the documentation based SOLELY on the files actually present in the codebase.\n"
-        "EXTREMELY IMPORTANT: If files are mentioned in the README but are not present in the codebase, "
-        "do NOT mention them in your documentation. They do not exist and are not relevant.\n"
-        "This is a public facing document, so DO NOTinclude any instructions or suggestions to the developer.\n"
-    ),
     "generate_issues_readme": (
         "Create a descriptive title for the following README contents and create the README file:\n"
         "{readme_content}\n"
@@ -96,14 +76,31 @@ PROMPTS = {
     ),
     "identity_repo_type": (
         """
-        You are analyzing a software repository to identify its type and characteristics.
-        Explore the directory structure and relevant files (e.g., `package.json`, `requirements.txt`, `Dockerfile`, `setup.py`, `pyproject.toml`, etc.). Your goal is to extract the following information:
-        - Primary programming language(s)
-        - Frameworks/libraries used
-        - Type of project (e.g., CLI tool, REST API backend, web frontend, data pipeline, etc.)
-        - Any patterns or architectural styles (e.g., microservices, monolith, layered architecture)
+        You are analyzing a software repository to identify its core characteristics. Your task is to examine the directory structure and inspect key configuration and metadata files such as:
 
-        Output a structured summary that will be used for further vulnerability analysis."""
+        - `package.json`
+        - `requirements.txt`
+        - `Dockerfile`
+        - `setup.py`
+        - `pyproject.toml`
+        - `Pipfile`
+        - `build.gradle`, `pom.xml`, etc.
+
+        Based on your analysis, extract and summarize the following information:
+
+        1. **Primary Programming Language(s)** — e.g., Python, JavaScript, Go, etc.
+        2. **Frameworks and Libraries Used** — e.g., Django, Flask, Express, React, TensorFlow. Mention any notable or security-sensitive packages.
+        3. **Type of Project** — What the repository appears to be (e.g., REST API backend, command-line tool, frontend web app, data processing pipeline, microservice component, library/package, etc.).
+        4. **Architectural Style or Patterns** — e.g., monolith, microservices, layered architecture, MVC, event-driven, serverless.
+
+        Requirements:
+        - Infer project characteristics using file names, dependencies, folder structure (e.g., `routes/`, `models/`, `src/`, etc.), and any usage patterns found.
+        - Be precise and avoid speculative guesses — base your conclusions on observable evidence in the codebase.
+        - If there are indicators of multiple types (e.g., a monorepo or full-stack app), include all relevant components.
+        
+        Keep descriptions concise, factual, and immediately useful for downstream vulnerability and pattern detection.
+
+        """
     ),
     "generate_common_vulnerabilities": (
         """

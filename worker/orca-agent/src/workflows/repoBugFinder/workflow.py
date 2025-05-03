@@ -14,6 +14,7 @@ from prometheus_swarm.workflows.utils import (
 from src.workflows.repoBugFinder.prompts import PROMPTS
 from kno_sdk import agent_query, index_repo
 from pathlib import Path
+import re
 
 
 class Task:
@@ -194,6 +195,26 @@ class RepoBugFinderWorkflow(Workflow):
                 "message": f"Readme file review workflow failed: {str(e)}",
                 "data": None,
             }
+    def extract_markdown_content(self,text):
+        start_token = "```markdown"
+        end_token = "```"
+
+        # Find the first ```markdown
+        start_index = text.find(start_token)
+        if start_index == -1:
+            raise ValueError("No '```markdown' block found.")
+
+        # Find the next ``` AFTER the markdown start
+        end_index = text.rfind(end_token)
+        if end_index == -1 or end_index <= start_index:
+            raise ValueError("No closing triple backtick found after '```markdown'.")
+
+        # Adjust start to after ```markdown\n
+        start_index += len(start_token)
+
+        # Extract and clean
+        markdown_content = text[start_index:end_index].lstrip('\n').rstrip()
+        return markdown_content
     def generate_bug_finder_file(self, index):
         """Generate the README file."""
 
@@ -217,7 +238,7 @@ class RepoBugFinderWorkflow(Workflow):
                 ],
                 prompt=PROMPTS[
                     "generate_common_vulnerabilities"
-                ].format(identified_repo_type=identified_repo_type),
+                ].format(identified_repo_type=identified_repo_type.replace("#Final-Answer:","")),
                 MODEL_API_KEY=os.environ.get("ANTHROPIC_API_KEY"),
             )
             print("identified_common_vulnerabilities",identified_common_vulnerabilities)
@@ -229,7 +250,7 @@ class RepoBugFinderWorkflow(Workflow):
                 ],
                 prompt=PROMPTS[
                     "scan_codebase_for_identified_issues"
-                ].format(identified_common_vulnerabilities=identified_common_vulnerabilities),
+                ].format(identified_common_vulnerabilities=identified_common_vulnerabilities.replace("#Final-Answer:","")),
                 MODEL_API_KEY=os.environ.get("ANTHROPIC_API_KEY"),
             )
             
@@ -242,13 +263,24 @@ class RepoBugFinderWorkflow(Workflow):
                 ],
                 prompt=PROMPTS[
                     "format_identified_issues_into_markdown"
-                ].format(identified_code_issues=identified_issues),
+                ].format(identified_code_issues=identified_issues.replace("#Final-Answer:","")),
                 MODEL_API_KEY=os.environ.get("ANTHROPIC_API_KEY"),
             )
             
             print("identified_issues_formatted_markdown",identified_issues_formatted_markdown)
             
-            self.context["readme_content"] = identified_issues_formatted_markdown
+            marker = "#Final-Answer:"
+            position = identified_issues_formatted_markdown.find(marker)
+            if position != -1:
+                # Get everything after the marker
+                final_answer_content = identified_issues_formatted_markdown[position + len(marker):]
+                self.context["readme_content"] = final_answer_content.strip()
+            else:
+                self.context["readme_content"] = final_answer_content.strip()
+            
+            if self.context["readme_content"].find("```markdown"):
+                self.context["readme_content"] = self.extract_markdown_content(self.context["readme_content"])
+                
             self.context["file_name"] = "SECURITY_AUDIT_Prometheus-beta.md"
 
             generate_readme_file_phase = phases.IssuesReadmeFileCreationPhase(workflow=self)
