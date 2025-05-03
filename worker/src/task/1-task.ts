@@ -21,7 +21,7 @@ export async function task(roundNumber: number): Promise<void> {
   // No submission on Round 0 so no need to trigger fetch audit result before round 3
   // Changed from 3 to 4 to have more time
   if (roundNumber >= 4) {
-    const triggerFetchAuditResult = await fetch(`${middleServerUrl}/summarizer/worker/update-audit-result`, {
+    const triggerFetchAuditResult = await fetch(`${middleServerUrl}/bug-finder/worker/update-audit-result`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -115,7 +115,7 @@ export async function task(roundNumber: number): Promise<void> {
     // const initializedDocumentSummarizeIssues = await getInitializedDocumentSummarizeIssues(existingIssues);
 
     console.log(`[TASK] Making Request to Middle Server with taskId: ${TASK_ID} and round: ${roundNumber}`);
-    const requiredWorkResponse = await fetch(`${middleServerUrl}/summarizer/worker/fetch-todo`, {
+    const requiredWorkResponse = await fetch(`${middleServerUrl}/bug-finder/worker/fetch-todo`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

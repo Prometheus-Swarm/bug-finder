@@ -35,8 +35,8 @@ export async function audit(cid: string, roundNumber: number, submitterKey: stri
     }
     console.log(`[AUDIT] ✅ Signature decoded successfully`);
 
-    console.log(`[AUDIT] Checking summarizer status for submitter ${submitterKey}`);
-    const checkSummarizerResponse = await fetch(`${middleServerUrl}/summarizer/worker/check-todo`, {
+    console.log(`[AUDIT] Checking bug-finder status for submitter ${submitterKey}`);
+    const checkSummarizerResponse = await fetch(`${middleServerUrl}/bug-finder/worker/check-todo`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

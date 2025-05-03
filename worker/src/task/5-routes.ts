@@ -124,7 +124,7 @@ export async function routes() {
         action: "add-todo-pr",
       };
       const middleServerSignature = await namespaceWrapper.payloadSigning(middleServerPayload, secretKey);
-      const middleServerResponse = await fetch(`${middleServerUrl}/summarizer/worker/add-todo-pr`, {
+      const middleServerResponse = await fetch(`${middleServerUrl}/bug-finder/worker/add-todo-pr`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -140,7 +140,7 @@ export async function routes() {
       await namespaceWrapper.storeSet(`result-${roundNumber}`, status.SAVING_TODO_PR_SUCCEEDED);
       res.status(200).json({ result: "Successfully saved PR" });
     } catch (error) {
-      console.error("[TASK] Error adding PR to summarizer todo:", error);
+      console.error("[TASK] Error adding PR to bug-finder todo:", error);
       await namespaceWrapper.storeSet(`result-${roundNumber}`, status.SAVING_TODO_PR_FAILED);
       res.status(400).json({ error: "Failed to save PR" });
     }
