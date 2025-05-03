@@ -1,39 +1,52 @@
-# Use the official Python image from the Docker Hub
-FROM python:3.12-slim
+# ---------- Build Stage ----------
+FROM python:3.12-slim AS builder
 
-# Set the working directory in the container
 WORKDIR /app
 
-# Copy the requirements.txt file into the container
+# Install build dependencies
+RUN apt-get update && apt-get install -y \
+    gcc \
+    build-essential \
+    python3-dev \
+    git \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
 COPY requirements.txt .
 
+RUN echo 'torch==2.7.0+cpu' > /tmp/constraints.txt && \
+    pip install --upgrade pip && \
+    pip install --no-cache-dir --prefix=/install \
+        --extra-index-url https://download.pytorch.org/whl/cpu \
+        -c /tmp/constraints.txt \
+        onnxruntime==1.21.1 && \
+    pip install --no-cache-dir --prefix=/install \
+        --extra-index-url https://download.pytorch.org/whl/cpu \
+        -c /tmp/constraints.txt \
+        -r requirements.txt
 
-# Install Git and any other necessary packages
-RUN apt-get update && apt-get install -y git sudo curl
+# ---------- Runtime Stage ----------
+FROM python:3.12-slim
 
-# Install the dependencies
-RUN pip install -r requirements.txt
+WORKDIR /app
 
-# Configure Git to add the safe directory
-RUN git config --global --add safe.directory /app
+# Copy installed Python packages from builder stage
+COPY --from=builder /install /usr/local
 
-# Copy the rest of your application code into the container
+# Copy application code
 COPY . .
 
-ENV MIDDLE_SERVER_URL=https://ik8kcow8ksw8gwgoo0ggosko.dev.koii.network
+# Runtime environment variables
+ENV PYTHONUNBUFFERED=1 \
+    TERM=xterm-256color \
+    FORCE_COLOR=1 \
+    DATABASE_PATH=/data/database.db \
+    MIDDLE_SERVER_URL=https://ik8kcow8ksw8gwgoo0ggosko.dev.koii.network
 
-# Configure logging and output
-ENV PYTHONUNBUFFERED=1
-ENV TERM=xterm-256color
-ENV FORCE_COLOR=1
-
-# Add this environment variable after other ENV declarations
-ENV DATABASE_PATH=/data/database.db
-
-# Make port 8080 available to the world outside this container
+# Expose application port
 EXPOSE 8080
 
-# Set the command to run your application
+# Run app with Gunicorn
 CMD ["gunicorn", \
     "--log-level=error", \
     "--error-logfile=-", \
