@@ -65,7 +65,7 @@ PROMPTS = {
         "The content will be added automatically, your job is just to create a good title."
     ),
     "create_pr": (
-        "You are creating a pull request for the file README_Prometheus.md you have generated. "
+        "You are creating a pull request for the file SECURITY_AUDIT_Prometheus-beta.md you have generated. "
         "The repository has been cloned to the current directory.\n"
         "Use the `create_pull_request_legacy` tool to create the pull request.\n"
         "IMPORTANT: Always use relative paths (e.g., 'src/file.py' not '/src/file.py')\n\n"
@@ -77,17 +77,17 @@ PROMPTS = {
         "   - The main features and value of the documentation\n"
     ),
     "review_readme_file": (
-        "Review the README_Prometheus.md in the repository and evaluate its quality and "
+        "Review the SECURITY_AUDIT_Prometheus-beta.md in the repository and evaluate its quality and "
         "relevance to the repository.\n\n"
         "Please analyze:\n"
-        "1. Is the README_Prometheus.md file related to this specific repository? (Does it describe the actual code "
+        "1. Is the SECURITY_AUDIT_Prometheus-beta.md file related to this specific repository? (Does it describe the actual code "
         "and purpose of this repo?)\n"
         "2. Does it correctly explain the repository's purpose, features, and functionality?\n"
         "3. Is it comprehensive enough to help users understand and use the repository?\n"
         "4. Does it follow best practices for README documentation?\n\n"
         "Use the `review_readme_file` tool to submit your findings.\n"
         "IMPORTANT: Do not assume that an existing README is correct. "
-        "Evaluate README_Prometheus.md against the codebase.\n"
+        "Evaluate SECURITY_AUDIT_Prometheus-beta.md against the codebase.\n"
         "DO NOT consider the filename in your analysis, only the content.\n"
         "STOP after submitting the review report."
     ),
