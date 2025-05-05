@@ -278,7 +278,7 @@ class RepoBugFinderWorkflow(Workflow):
             else:
                 self.context["readme_content"] = final_answer_content.strip()
             
-            if self.context["readme_content"].find("```markdown"):
+            if self.context["readme_content"].find("```markdown") != -1:
                 self.context["readme_content"] = self.extract_markdown_content(self.context["readme_content"])
                 
             self.context["file_name"] = "SECURITY_AUDIT_Prometheus-beta.md"
