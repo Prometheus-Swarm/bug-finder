@@ -5,7 +5,7 @@
 
 ## Task Name ##
 # Maximum 24 characters.
-task_name: "Prometheus Docs Agent"
+task_name: "Prometheus BugFinder Agent"
 
 ## Task Author ##
 author: "Prometheus"
@@ -21,11 +21,11 @@ description: "Task description."
 
 ## Repository URL ##
 # Must be public for whitelisted tasks.
-repositoryUrl: "https://github.com/koii-network/builder-247"
+repositoryUrl: "https://github.com/Prometheus-Swarm/bug-finder"
 
 ## Image URL ##
 # 230x86 pixels.
-imageUrl: "https://koii-k2-task-metadata.s3.us-east-2.amazonaws.com/Docs.png"
+imageUrl: "https://s3.koii.network/koii-k2-task-metadata/Bugfinder.png"
 
 ## Info URL ##
 infoUrl: "https://www.koii.network/blog/Earn-Crypto-With-AI-Agent"
@@ -66,7 +66,7 @@ task_type: "KOII"
 
 ## Token Mint Address (ONLY for KPL tasks) ##
 # The Fire Token address is provided as an example.
-token_type: "4qayyw53kWz6GzypcejjT1cvwMXS1qYLSMQRE8se3gTv"
+token_type: ""
 
 ## Total Bounty Amount ##
 # The total bounty amount that will be available for distribution over all rounds.
