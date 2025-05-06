@@ -15,6 +15,7 @@ from src.workflows.repoBugFinder.prompts import PROMPTS
 from kno_sdk import agent_query, index_repo
 from pathlib import Path
 import re
+import time
 
 
 class Task:
@@ -245,6 +246,7 @@ class RepoBugFinderWorkflow(Workflow):
 
             identified_issues = agent_query(
                 repo_index=index,
+                max_iterations=60,
                 llm_system_prompt=PROMPTS[
                     "system_prompt"
                 ],
@@ -253,7 +255,8 @@ class RepoBugFinderWorkflow(Workflow):
                 ].format(identified_common_vulnerabilities=identified_common_vulnerabilities.replace("#Final-Answer:","")),
                 MODEL_API_KEY=os.environ.get("ANTHROPIC_API_KEY"),
             )
-            
+            # Getting rate limited from anthropic after above call
+            time.sleep(60)
             print("identified_issues",identified_issues)
 
             identified_issues_formatted_markdown = agent_query(
