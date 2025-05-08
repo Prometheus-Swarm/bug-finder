@@ -137,7 +137,7 @@ export async function routes() {
       if (middleServerResponse.status !== 200) {
         throw new Error(`Posting to middle server failed: ${middleServerResponse.statusText}`);
       }
-      await namespaceWrapper.storeSet(`result-${roundNumber}`, status.SAVING_TODO_PR_SUCCEEDED);
+      // await namespaceWrapper.storeSet(`result-${roundNumber}`, status.SAVING_TODO_PR_SUCCEEDED);
       res.status(200).json({ result: "Successfully saved PR" });
     } catch (error) {
       console.error("[TASK] Error adding PR to bug-finder todo:", error);
