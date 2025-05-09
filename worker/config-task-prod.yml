@@ -119,12 +119,12 @@ tags: ["AI"]
 # Environment ##
 # TEST or PRODUCTION
 # Production mode will expose your task to all the task runners, even if not whitelisted.
-environment: "TEST"
+environment: "PRODUCTION"
 
 #################################### FOR UPDATING TASKS ONLY ####################################
 
 ## Old Task ID ##
-task_id: "62n2aAVVV42rtt53wxieotTdnKpTRjiChsHYdSxHDhAZ"
+task_id: "8z7Yb7yX7kPBJ3aGXyxxtTJCoyvHz7qUzcs47HuWHtR2"
 
 ## Migration Description ##
-migrationDescription: "Error logging and Bug Fixing and Slack Notification"
+migrationDescription: "Fix the error causing the status to fail"
