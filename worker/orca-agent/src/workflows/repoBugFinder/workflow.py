@@ -15,7 +15,7 @@ from src.workflows.repoBugFinder.prompts import PROMPTS
 from kno_sdk import agent_query, index_repo
 from pathlib import Path
 import time
-import datetime
+from datetime import datetime
 
 class Task:
     def __init__(self, title: str, description: str, acceptance_criteria: list[str]):
