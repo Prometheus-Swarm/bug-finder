@@ -2,7 +2,7 @@ import { TASK_ID, namespaceWrapper } from "@_koii/namespace-wrapper";
 import "dotenv/config";
 import os from "os";
 
-const imageUrl = "docker.io/syedghazanferanwar/prometheus-bugfinder:0.18";
+const imageUrl = "docker.io/syedghazanferanwar/prometheus-bugfinder:0.22";
 
 function getHostIP() {
   const interfaces = os.networkInterfaces();
