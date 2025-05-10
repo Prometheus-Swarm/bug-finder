@@ -6,6 +6,8 @@ import { actionMessage, errorMessage, middleServerUrl } from "../constant";
 import { TASK_ID, namespaceWrapper } from "@_koii/namespace-wrapper";
 import { LogLevel } from "@_koii/namespace-wrapper/dist/types";
 export async function task() {
+  let counter = 0; 
+  let currentBountyId = ""
   while (true) {
     try {
       let requiredWorkResponse;
@@ -62,9 +64,15 @@ export async function task() {
       }
       const requiredWorkResponseData = await requiredWorkResponse.json();
       console.log("[TASK] requiredWorkResponseData: ", requiredWorkResponseData);
+      if (currentBountyId !== requiredWorkResponseData.data.id) {
+        currentBountyId = requiredWorkResponseData.data.id;
+        counter = 0;
+      }
       // const uuid = uuidv4();
       const alreadyAssigned = await namespaceWrapper.storeGet(JSON.stringify(requiredWorkResponseData.data.id));
-      if (alreadyAssigned) {
+      if (alreadyAssigned && counter<40) {
+        // Added a counter check, if its more than 40 minutes and its still not updated, Ignore storeSet value from namespaceWrapper or it will hang forever
+        counter++;
         await new Promise((resolve) => setTimeout(resolve, retryDelay));
         continue;
         // return;
@@ -72,6 +80,8 @@ export async function task() {
         await namespaceWrapper.storeSet(JSON.stringify(requiredWorkResponseData.data.id), "initialized");
       }
 
+      // Reset Counter
+      counter = 0;
       const podcallPayload = {
         taskId: TASK_ID,
       };
