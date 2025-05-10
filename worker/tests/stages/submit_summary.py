@@ -26,7 +26,7 @@ async def execute(context: Context, prepare_data: dict):
 
     # Mock response for submission
     response = requests.post(
-        "http://localhost:5000/api/summarizer/submit",
+        "http://localhost:5000/api/bug-finder/submit",
         json={
             "taskId": context.config.task_id,
             "roundNumber": round_number,

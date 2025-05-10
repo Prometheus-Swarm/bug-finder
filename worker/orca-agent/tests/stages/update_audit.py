@@ -14,7 +14,7 @@ def prepare(runner, worker, role: str):
 
 def execute(runner, worker, data):
     """Execute worker task step"""
-    url = f"{runner.get('middle_server_url')}/summarizer/worker/update-audit-result"
+    url = f"{runner.get('middle_server_url')}/bug-finder/worker/update-audit-result"
     response = requests.post(
         url,
         json=data,

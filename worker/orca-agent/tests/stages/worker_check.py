@@ -22,7 +22,7 @@ def execute(runner, worker, data):
     """Execute worker task step"""
     if not data:
         return {"success": True, "message": "No PR URL found"}
-    url = f"{runner.get('middle_server_url')}/summarizer/worker/check-todo"
+    url = f"{runner.get('middle_server_url')}/bug-finder/worker/check-todo"
     response = requests.post(
         url,
         json=data,

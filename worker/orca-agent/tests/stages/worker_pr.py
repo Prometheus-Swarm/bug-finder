@@ -28,7 +28,7 @@ def execute(runner, worker, data):
     if data is None:
         return {"success": True, "message": "Skipped due to missing PR URL"}
 
-    url = f"{runner.get('middle_server_url')}/summarizer/worker/add-todo-pr"
+    url = f"{runner.get('middle_server_url')}/bug-finder/worker/add-todo-pr"
     response = requests.post(
         url,
         json={"signature": data["signature"], "stakingKey": data["stakingKey"]},

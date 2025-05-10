@@ -19,7 +19,7 @@ async def execute(context: Context, prepare_data: dict):
 
     # Mock response for fetching todo
     response = requests.post(
-        "http://localhost:5000/api/summarizer/fetch-summarizer-todo",
+        "http://localhost:5000/api/bug-finder/fetch-summarizer-todo",
         json={
             "stakingKey": staking_key,
             "roundNumber": round_number,

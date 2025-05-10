@@ -30,7 +30,7 @@ def prepare(runner, worker):
 
 def execute(runner, worker, data):
     """Execute worker task step"""
-    url = f"{runner.get('middle_server_url')}/summarizer/worker/fetch-todo"
+    url = f"{runner.get('middle_server_url')}/bug-finder/worker/fetch-todo"
     response = requests.post(
         url,
         json={"signature": data["stakingSignature"], "stakingKey": data["stakingKey"]},
