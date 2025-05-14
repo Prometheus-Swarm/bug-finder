@@ -191,7 +191,7 @@ export async function routes() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ signature: middleServerSignature, stakingKey: stakingKey }),
+        body: JSON.stringify({ stakingKey, swarmBountyId, error: errorMessage }),
       });
 
       console.log("[TASK] Add PR Response: ", middleServerResponse);

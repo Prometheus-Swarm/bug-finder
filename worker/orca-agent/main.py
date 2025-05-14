@@ -1,7 +1,7 @@
 from src.server import create_app
 import os
 
-from prometheus_swarm.utils.logging import logging
+from prometheus_swarm.utils.logging import set_error_post_hook, set_logs_post_hook
 import requests
 
 
@@ -48,8 +48,8 @@ def post_error_logs_to_server(
 
 app = create_app()
 # Register it once at startup
-logging.set_error_post_hook(post_error_logs_to_server)
-logging.set_logs_post_hook(post_logs_to_server)
+set_error_post_hook(post_error_logs_to_server)
+set_logs_post_hook(post_logs_to_server)
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8080))

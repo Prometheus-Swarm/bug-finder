@@ -6,6 +6,7 @@ from concurrent.futures import ThreadPoolExecutor
 from prometheus_swarm.database import get_db
 from src.server.services.repo_bug_finder_service import logger
 from prometheus_swarm.utils.logging import task_id_var, swarm_bounty_id_var, signature_var
+import contextvars
 
 bp = Blueprint("task", __name__)
 executor = ThreadPoolExecutor(max_workers=2)
@@ -88,7 +89,10 @@ def start_task():
             # Call the original callback
             post_pr_url(future, task_id, podcall_signature, swarmBountyId)
 
+        
+        ctx = contextvars.copy_context()
         agent_result = executor.submit(
+            ctx.run,
             repo_bug_finder_service.handle_task_creation,
             task_id=task_id,
             swarmBountyId=swarmBountyId,
