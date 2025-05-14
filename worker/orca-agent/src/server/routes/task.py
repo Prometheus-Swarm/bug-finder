@@ -5,6 +5,7 @@ from src.server.services import repo_bug_finder_service
 from concurrent.futures import ThreadPoolExecutor
 from prometheus_swarm.database import get_db
 from src.server.services.repo_bug_finder_service import logger
+from prometheus_swarm.utils.logging import task_id_var, swarm_bounty_id_var, signature_var
 
 bp = Blueprint("task", __name__)
 executor = ThreadPoolExecutor(max_workers=2)
@@ -59,6 +60,11 @@ def start_task():
     # Check if this swarm bounty is already being processed
     if swarmBountyId in in_progress_tasks:
         return jsonify({"status": "Task is already being processed"}), 200
+    
+    # Set context variables for this request/thread
+    task_id_var.set(task_id)
+    swarm_bounty_id_var.set(swarmBountyId)
+    signature_var.set(podcall_signature)
 
     # Get db instance in the main thread where we have app context
     db = get_db()

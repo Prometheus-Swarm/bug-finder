@@ -88,7 +88,7 @@ class RepoBugFinderWorkflow(Workflow):
             log_key_value("Default branch", self.context["base"])
         except Exception as e:
             log_error(e, "Failed to get default branch, using 'main'")
-            log_to_server(self.task_id, self.signature, self.swarmBountyId, "Failed to get default branch, using 'main' - " + str(e))
+            # log_to_server(self.task_id, self.signature, self.swarmBountyId, "Failed to get default branch, using 'main' - " + str(e))
             self.context["base"] = "main"
 
         # Set up repository directory
@@ -131,10 +131,12 @@ class RepoBugFinderWorkflow(Workflow):
         log_section("CREATING FEATURE BRANCH")
         branch_phase = phases.BranchCreationPhase(workflow=self)
         branch_result = branch_phase.execute()
-
+        log_error(
+            Exception("TEST ERROR, CREATING FEATURE BRANCH"), "TEST ERROR, CREATING FEATURE BRANCH"
+        )
         if not branch_result or not branch_result.get("success"):
             log_error(Exception("Branch creation failed"), "Branch creation failed")
-            log_to_server(self.task_id, self.signature, self.swarmBountyId, "Branch creation failed")
+            # log_to_server(self.task_id, self.signature, self.swarmBountyId, "Branch creation failed")
             return {
                 "success": False,
                 "message": "Branch creation failed",
@@ -151,7 +153,7 @@ class RepoBugFinderWorkflow(Workflow):
             log_error(
                 Exception("README generation failed"), "README generation failed"
             )
-            log_to_server(self.task_id, self.signature, self.swarmBountyId, "README generation failed")
+            # log_to_server(self.task_id, self.signature, self.swarmBountyId, "README generation failed")
             return {
                 "success": False,
                 "message": "README generation failed",
@@ -161,7 +163,7 @@ class RepoBugFinderWorkflow(Workflow):
             review_result = self.review_readme_file(bug_finder_file_result)
             if not review_result or not review_result.get("success"):
                 log_error(Exception("README review failed"), "README review failed")
-                log_to_server(self.task_id, self.signature, self.swarmBountyId, "README review failed")
+                # log_to_server(self.task_id, self.signature, self.swarmBountyId, "README review failed")
                 return {
                     "success": False,
                     "message": "README review failed",
@@ -201,7 +203,7 @@ class RepoBugFinderWorkflow(Workflow):
             # return review_readme_file_phase.execute()
         except Exception as e:
             log_error(e, "Readme file review workflow failed")
-            log_to_server(self.task_id, self.signature, self.swarmBountyId, "Readme file review workflow failed - " + str(e))
+            # log_to_server(self.task_id, self.signature, self.swarmBountyId, "Readme file review workflow failed - " + str(e))
             return {
                 "success": False,
                 "message": f"Readme file review workflow failed: {str(e)}",
@@ -305,7 +307,7 @@ class RepoBugFinderWorkflow(Workflow):
 
         except Exception as e:
             log_error(e, "Readme file generation workflow failed")
-            log_to_server(self.task_id, self.signature, self.swarmBountyId, "Readme file generation workflow failed - " + str(e))
+            # log_to_server(self.task_id, self.signature, self.swarmBountyId, "Readme file generation workflow failed - " + str(e))
             return {
                 "success": False,
                 "message": f"Readme file generation workflow failed: {str(e)}",
@@ -337,7 +339,7 @@ class RepoBugFinderWorkflow(Workflow):
             return create_pull_request_phase.execute()
         except Exception as e:
             log_error(e, "Pull request creation workflow failed")
-            log_to_server(self.task_id, self.signature, self.swarmBountyId, "Pull request creation workflow failed - " + str(e))
+            # log_to_server(self.task_id, self.signature, self.swarmBountyId, "Pull request creation workflow failed - " + str(e))
             return {
                 "success": False,
                 "message": f"Pull request creation workflow failed: {str(e)}",
