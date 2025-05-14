@@ -5,7 +5,7 @@ import os
 from flask import jsonify
 from prometheus_swarm.database import get_db 
 from prometheus_swarm.clients import setup_client
-from src.workflows.repoSummarizer.workflow import RepoSummarizerWorkflow
+from src.workflows.repoBugFinder.workflow import RepoBugFinderWorkflow
 from prometheus_swarm.utils.logging import logger, log_error
 from src.workflows.starRepo.workflow import StarRepoWorkflow
 from dotenv import load_dotenv

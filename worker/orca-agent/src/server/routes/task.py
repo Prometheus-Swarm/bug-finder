@@ -68,6 +68,7 @@ def start_task():
             task_id=task_id,
             swarmBountyId=swarmBountyId,
             repo_url=repo_url,
+            signature=podcall_signature,
             db=db,  # Pass db instance
         )
         return jsonify(result)
@@ -86,6 +87,7 @@ def start_task():
             task_id=task_id,
             swarmBountyId=swarmBountyId,
             repo_url=repo_url,
+            signature=podcall_signature,
             db=db,  # Pass db instance
         )
         agent_result.add_done_callback(cleanup_callback)

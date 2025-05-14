@@ -18,4 +18,4 @@ openai>=0.28.0
 colorama>=0.4.6
 prometheus-swarm>=0.2.2
 prometheus-test>=0.1.7
-kno-sdk==1.4.8
+kno-sdk==1.4.9
