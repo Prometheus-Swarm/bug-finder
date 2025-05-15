@@ -130,9 +130,6 @@ class RepoBugFinderWorkflow(Workflow):
         log_section("CREATING FEATURE BRANCH")
         branch_phase = phases.BranchCreationPhase(workflow=self)
         branch_result = branch_phase.execute()
-        log_error(
-            Exception("TEST ERROR, CREATING FEATURE BRANCH"), "TEST ERROR, CREATING FEATURE BRANCH"
-        )
         if not branch_result or not branch_result.get("success"):
             log_error(Exception("Branch creation failed"), "Branch creation failed")
             # log_to_server(self.task_id, self.signature, self.swarmBountyId, "Branch creation failed")

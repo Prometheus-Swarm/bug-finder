@@ -16,6 +16,6 @@ tenacity>=9.0.0
 sqlmodel>=0.0.22
 openai>=0.28.0
 colorama>=0.4.6
-prometheus-swarm>=0.2.8b3
+prometheus-swarm==0.2.8b4
 prometheus-test>=0.1.7
 kno-sdk==1.4.9
