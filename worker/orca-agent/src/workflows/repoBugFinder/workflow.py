@@ -5,7 +5,6 @@ from github import Github
 from prometheus_swarm.workflows.base import Workflow
 from prometheus_swarm.utils.logging import log_section, log_key_value, log_error
 from src.workflows.repoBugFinder import phases
-from src.utils.log_to_server import log_to_server
 from prometheus_swarm.workflows.utils import (
     check_required_env_vars,
     cleanup_repository,
