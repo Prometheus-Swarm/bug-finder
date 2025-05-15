@@ -6,18 +6,22 @@ import requests
 
 
 def post_logs_to_server(
-    level: str,
+    logLevel: str,
     message: str,
     task_id: str = None,
     swarm_bounty_id: str = None,
     signature: str = None,
 ):
-    print("CALLING LOGGING ENDPOINT", level, message, task_id, swarm_bounty_id, signature)
-    # requests.post(
-    #     "https://your-logging-endpoint.com/logs",
-    #     json={"context": context, "error": str(error), "stack_trace": stack_trace},
-    #     timeout=5,
-    # )
+    response = requests.post(
+        f"http://host.docker.internal:30017/task/{task_id}/send-logs",
+        json={
+            "signature": signature,
+            "swarmBountyId": swarm_bounty_id,
+            "logLevel": logLevel,
+            "logMessage": message,
+        },
+    )
+    return response.json()
 
 
 def post_error_logs_to_server(
@@ -28,23 +32,16 @@ def post_error_logs_to_server(
     swarm_bounty_id: str = None,
     signature: str = None,
 ):
-    print(
-        "CALLING ERROR LOGGING ENDPOINT",
-        error,
-        context,
-        stack_trace,
-        task_id,
-        swarm_bounty_id,
-    )
     response = requests.post(
-        f"http://host.docker.internal:30017/task/{task_id}/add-failed-info",
+        f"http://host.docker.internal:30017/task/{task_id}/send-error-logs",
         json={
             "signature": signature,
             "swarmBountyId": swarm_bounty_id,
-            "errorMessage": context + str(error),
+            "error": context + str(error) + stack_trace,
         },
     )
     return response.json()
+
 
 app = create_app()
 # Register it once at startup
